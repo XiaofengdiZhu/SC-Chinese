@@ -53,7 +53,7 @@ def main():
 
 
         print('转换格式 Converting Format ...')
-        fnt2lst(outputname_base + '.fnt', outputname_base + '.lst', kerning_file_path, 0.5, '▯') #▯:U+25AF
+        fnt2lst(outputname_base + '.fnt', outputname_base + '.lst', kerning_file_path, 0.5, '')
         print('清理缓存 Removing Caches ...')
         os.remove(outputname_base + '.fnt')
         os.remove(outputname_base + '_0.png')

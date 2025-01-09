@@ -20,7 +20,8 @@ class Line(dict):
             key, value = comp.split('=')
             self[key] = value
 
-def fnt2lst(fnt_path, lst_path, kerning_path, scale=1, fallback='_'):
+#fallback为空字符时，将使用字体默认的notdef作为fallback
+def fnt2lst(fnt_path, lst_path, kerning_path, scale=1, fallback=''):
     lst_file = open(lst_path, 'w', encoding='utf-8')
     lines = open(fnt_path, 'r', encoding='utf-8').readlines()
 
@@ -34,21 +35,17 @@ def fnt2lst(fnt_path, lst_path, kerning_path, scale=1, fallback='_'):
     height = int(commons['scaleH'])
 
     char_count = int(Line(lines[3])['count'])
-
-    flag = True
-    line1 = lines[4]
-    infos1 = Line(line1)
-    if int(infos1['id']) < 0:
-        flag = False
-
-    lst_file.write('{}\n'.format(char_count if flag else char_count - 1))
+    lst_file.write('{}\n'.format(char_count))
 
     for i in range(4, char_count + 4):
         line = lines[i]
         infos = Line(line)
         id = int(infos['id'])
-        if id < 0:
+        #说明：使用0来代替-1
+        if id == 0:
             continue
+        if id < 0:
+            id = 0
         unicode = chr(id)
         x = int(infos['x'])
         y = int(infos['y'])
@@ -73,7 +70,7 @@ def fnt2lst(fnt_path, lst_path, kerning_path, scale=1, fallback='_'):
     lst_file.write('{}\n'.format(line_height))
     lst_file.write('{}\t{}\n'.format(spacing[0], spacing[1]))
     lst_file.write('{}\n'.format(scale))
-    lst_file.write('{}\n'.format(fallback))
+    lst_file.write('{}\n'.format(fallback if len(fallback) > 0 else chr(0)))
 
     if(len(kerning_path) > 0 and os.path.exists(kerning_path)):
         kerning = open(kerning_path, 'r', encoding='utf-8').read()
